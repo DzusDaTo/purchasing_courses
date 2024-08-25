@@ -1,5 +1,6 @@
 from datetime import timezone, timedelta
 
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.validators import MaxValueValidator
 from django.db import models
@@ -89,3 +90,14 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return f"Профиль: {self.user}"
+
+
+class Review(models.Model):
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='review')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    rating = models.IntegerField()
+    comment = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.user.username} - {self.course.name} ({self.rating})'

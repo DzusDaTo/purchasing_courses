@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Subscription, Purchase
+from .models import Subscription, Purchase, Review
 from django.contrib.auth.models import User
 
 
@@ -35,3 +35,9 @@ class PurchaseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Purchase
         fields = ['id', 'course', 'purchase_date', 'is_paid']
+
+
+class ReviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Review
+        fields = ['course', 'rating', 'comment', 'created_at']
