@@ -13,7 +13,6 @@ class Course(models.Model):
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
-        # Обновляем цену всех подписок с этим курсом
         for subscrip in self.subscription.all():
             subscrip.save()
 
@@ -45,7 +44,6 @@ class Plan(models.Model):
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
-        # Обновляем цену всех подписок с этим планом
         for subscrip in self.subscription.all():
             subscrip.save()
 
