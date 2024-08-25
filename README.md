@@ -23,9 +23,6 @@ pip install -r requirements.txt
 ```
 ./manage.py migrate
 
-```
-
-```
 
 ```
 
@@ -34,5 +31,6 @@ pip install -r requirements.txt
 ```
 docker-compose build
 ```
-docker-compose up
+
 ```
+docker-compose up
