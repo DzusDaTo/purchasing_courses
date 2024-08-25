@@ -24,14 +24,9 @@ pip install -r requirements.txt
 ./manage.py migrate
 
 ```
-```
-./manage.py loaddata fixtures/categories.json fixtures/cottages.json fixtures/likes.json fixtures/rents.json fixtures/reviews.json  fixtures/towns.json fixtures/users.json fixtures/chats.json fixtures/messages.json
 
 ```
 
-#### Для запуска тестов:
-```
-coverage run manage.py test && coverage report
 ```
 
 ### Docker:
@@ -39,5 +34,5 @@ coverage run manage.py test && coverage report
 ```
 docker-compose build
 ```
-
+docker-compose up
 ```
