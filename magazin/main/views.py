@@ -3,8 +3,9 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from .models import Subscription, Purchase, Review
-from .serializers import SubscriptionSerializer, RegisterSerializer, PurchaseSerializer, ReviewSerializer
+from .models import Subscription, Purchase, Review, Course
+from .serializers import SubscriptionSerializer, RegisterSerializer, PurchaseSerializer, ReviewSerializer, \
+    CourseSerializer
 
 
 class SubscriptionViewSet(viewsets.ModelViewSet):
@@ -54,3 +55,8 @@ class UserReviewListView(generics.ListAPIView):
 
     def get_queryset(self):
         return Review.objects.filter(user=self.request.user)
+
+
+class CourseListView(generics.ListAPIView):
+    queryset = Course.objects.all()
+    serializer_class = CourseSerializer

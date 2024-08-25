@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Subscription, Purchase, Review
+from .models import Subscription, Purchase, Review, Course
 from django.contrib.auth.models import User
 
 
@@ -41,3 +41,11 @@ class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Review
         fields = ['course', 'rating', 'comment', 'created_at']
+
+
+class CourseSerializer(serializers.ModelSerializer):
+    average_rating = serializers.FloatField(read_only=True)
+
+    class Meta:
+        model = Course
+        fields = ['id', 'name', 'description', 'duration', 'full_price', 'average_rating']

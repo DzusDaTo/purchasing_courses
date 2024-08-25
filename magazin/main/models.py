@@ -4,6 +4,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.validators import MaxValueValidator
 from django.db import models
+from django.db.models import Avg
 
 
 class Course(models.Model):
@@ -11,6 +12,10 @@ class Course(models.Model):
     description = models.TextField(max_length=150, verbose_name='Описание курса')
     full_price = models.PositiveIntegerField(verbose_name='Полная стоимость')
     duration = models.PositiveIntegerField(verbose_name='Продолжительность курса')
+
+    def average_rating(self):
+        average = self.review.aggregate(Avg('rating'))['rating__avg']
+        return round(average, 2) if average else 0
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
@@ -95,7 +100,7 @@ class UserProfile(models.Model):
 class Review(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='review')
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    rating = models.IntegerField()
+    rating = models.PositiveIntegerField()
     comment = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
 
