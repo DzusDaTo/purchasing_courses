@@ -1,4 +1,4 @@
-# REST API для Fiagdon app
+# REST API для Purchasing courses
 
 
 ## В приложении реализованы следующие концепции:
@@ -22,7 +22,6 @@ pip install -r requirements.txt
 #### Подготавливаем БД и заполняем данными
 ```
 ./manage.py migrate
-
 
 ```
 
