@@ -40,6 +40,7 @@ class PurchaseCourseView(generics.CreateAPIView):
         serializer.save(user=self.request.user)
 
 
+# Просмотр и создание отзыва и присваивание отзыва пользователю
 class ReviewListCreateView(generics.ListCreateAPIView):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
@@ -49,6 +50,7 @@ class ReviewListCreateView(generics.ListCreateAPIView):
         serializer.save(user=self.request.user)
 
 
+# Просмотр отзывов, оставленных самим пользователем
 class UserReviewListView(generics.ListAPIView):
     serializer_class = ReviewSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -57,6 +59,7 @@ class UserReviewListView(generics.ListAPIView):
         return Review.objects.filter(user=self.request.user)
 
 
+# Просмотр всех курсов
 class CourseListView(generics.ListAPIView):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
