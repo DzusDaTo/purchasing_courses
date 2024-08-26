@@ -12,10 +12,7 @@ class Course(models.Model):
     description = models.TextField(max_length=150, verbose_name='Описание курса')
     full_price = models.PositiveIntegerField(verbose_name='Полная стоимость')
     duration = models.PositiveIntegerField(verbose_name='Продолжительность курса')
-
-    def average_rating(self):
-        average = self.review.aggregate(Avg('rating'))['rating__avg']
-        return round(average, 2) if average else 0
+    average_rating = models.FloatField(default=0.0, verbose_name='Средний рейтинг')
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
@@ -23,7 +20,7 @@ class Course(models.Model):
             subscrip.save()
 
     def __str__(self):
-        return f"Курсы: {self.name, self.full_price}"
+        return f"Курсы: {self.name, self.full_price, self.average_rating}"
 
 
 class Purchase(models.Model):
@@ -74,7 +71,12 @@ class Subscription(models.Model):
         if self.course and self.plan:
             full_price = self.course.full_price
             discount = self.plan.discount_percent
-            self.price = full_price - (full_price * discount / 100)
+
+            # Пересчет цены только после изменения
+            calculated_price = full_price - (full_price * discount / 100)
+
+            if self.price != calculated_price:
+                self.price = calculated_price
 
         if not self.end_date:
             if self.course and self.course.duration:
@@ -103,6 +105,11 @@ class Review(models.Model):
     rating = models.PositiveIntegerField()
     comment = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        self.course.average_rating = self.course.review.aggregate(Avg('rating'))['rating__avg'] or 0
+        self.course.save()
 
     def __str__(self):
         return f'{self.user.username} - {self.course.name} ({self.rating})'

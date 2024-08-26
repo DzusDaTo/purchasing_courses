@@ -1,3 +1,4 @@
+from django.db.models import Avg
 from rest_framework import viewsets, generics, status, permissions
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -9,7 +10,8 @@ from .serializers import SubscriptionSerializer, RegisterSerializer, PurchaseSer
 
 
 class SubscriptionViewSet(viewsets.ModelViewSet):
-    queryset = Subscription.objects.all()
+    # Подгрузка данных одним запрос
+    queryset = Subscription.objects.select_related('user', 'course', 'plan').all()
     serializer_class = SubscriptionSerializer
     permission_classes = [IsAuthenticated]
 
