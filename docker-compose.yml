@@ -1,5 +1,8 @@
 services:
     web-app:
+        depends_on:
+            - database
+            - redis
         build:
             context: .
         user: root
@@ -12,14 +15,11 @@ services:
             - DB_NAME=dbname
             - DB_USER=dbuser
             - DB_PASS=pass
-            - REDIS_URL=redis://redis:6379/0
+            - CELERY_BROKER_URL = 'redis://redis:6379/0'
 
         command: >
             sh -c "python manage.py runserver 0.0.0.0:8000"
 
-        depends_on:
-            - database
-            - redis
 
     database:
         image: postgres:14.6-alpine
@@ -31,6 +31,8 @@ services:
     redis:
         image: redis:7.0.5-alpine
         hostname: redis
+        ports:
+            - "6379:6379"
 
     worker:
         build:
@@ -50,6 +52,8 @@ services:
             - DB_NAME=dbname
             - DB_USER=dbuser
             - DB_PASS=pass
+            - CELERY_BROKER_URL=redis://redis:6379/0
+            - CELERY_RESULT_BACKEND=redis://redis:6379/0
 
     worker2:
         build:
@@ -69,6 +73,8 @@ services:
             - DB_NAME=dbname
             - DB_USER=dbuser
             - DB_PASS=pass
+            - CELERY_BROKER_URL=redis://redis:6379/0
+            - CELERY_RESULT_BACKEND=redis://redis:6379/0
 
     flower:
         build:
@@ -84,4 +90,6 @@ services:
             - redis
         ports:
             - "5555:5555"
+        environment:
+            - CELERY_BROKER_URL=redis://redis:6379/0
 

@@ -4,9 +4,9 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from .models import Subscription, Purchase, Review, Course
+from .models import Subscription, Purchase, Review, Course, CourseAnalytics
 from .serializers import SubscriptionSerializer, RegisterSerializer, PurchaseSerializer, ReviewSerializer, \
-    CourseSerializer
+    CourseSerializer, CourseAnalyticsSerializer
 
 
 class SubscriptionViewSet(viewsets.ModelViewSet):
@@ -65,3 +65,9 @@ class UserReviewListView(generics.ListAPIView):
 class CourseListView(generics.ListAPIView):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
+
+
+# Аналитика
+class CourseAnalyticsViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = CourseAnalytics.objects.all()
+    serializer_class = CourseAnalyticsSerializer

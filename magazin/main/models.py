@@ -23,6 +23,17 @@ class Course(models.Model):
         return f"Курсы: {self.name, self.full_price, self.average_rating}"
 
 
+class CourseAnalytics(models.Model):
+    course = models.OneToOneField(Course, on_delete=models.CASCADE)
+    average_rating = models.FloatField(default=0)
+    subscriber_count = models.PositiveIntegerField(default=0)
+    completed_courses = models.PositiveIntegerField(default=0)
+    total_income = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+
+    def __str__(self):
+        return f"Analytics for {self.course.name}"
+
+
 class Purchase(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
@@ -102,10 +113,11 @@ class UserProfile(models.Model):
 class Review(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='review')
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    rating = models.PositiveIntegerField()
+    rating = models.FloatField(default=0)
     comment = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
 
+    # Подсчет рейтинга при создании и изменении
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
         self.course.average_rating = self.course.review.aggregate(Avg('rating'))['rating__avg'] or 0

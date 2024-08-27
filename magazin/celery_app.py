@@ -1,5 +1,6 @@
 import os
 import time
+from datetime import timedelta
 
 from celery import Celery
 from django.conf import settings
@@ -17,5 +18,9 @@ app.conf.beat_schedule = {
     'check-subscriptions-daily': {
         'task': 'main.tasks.check_and_update_subscription_status',
         'schedule': crontab(hour=0, minute=0),  # ежедневно в полночь
+    },
+    'update-course-analytics-every-minute': {
+        'task': 'main.update_course_analytics',
+        'schedule': timedelta(minutes=1),
     },
 }
