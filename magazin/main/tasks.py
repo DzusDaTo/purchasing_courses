@@ -1,7 +1,7 @@
 from celery import shared_task
 from datetime import date
 
-from django.db.models import Avg, Sum
+from django.db.models import Avg, Count, Sum, Q
 
 from .models import Subscription, Course, CourseAnalytics
 
@@ -18,20 +18,21 @@ def check_and_update_subscription_status():
 
 @shared_task
 def update_course_analytics():
-    print("Updating course analytics...")
-    for course in Course.objects.all():
-        # Вычисляем средний рейтинг
-        average_rating = course.review.aggregate(Avg('rating'))['rating__avg'] or 0
+    analytics_data = Course.objects.annotate(
+        average_rating=Avg('review__rating'),  # Средний рейтинг
+        subscriber_count=Count('subscription'),  # Количество подписок
+        total_income=Sum('subscription__price', filter=Q(subscription__status='Active')),  # Общий доход от активных подписок
+        completed_courses=Count('subscription', filter=Q(subscription__status='Completed'))  # Количество завершенных курсов
+    ).values('id', 'average_rating', 'subscriber_count', 'total_income', 'completed_courses')
 
-        # Количество подписок (подписчиков)
-        subscriber_count = course.subscription.count()
+    for data in analytics_data:
+        CourseAnalytics.objects.update_or_create(
+            course_id=data['id'],
+            defaults={
+                'average_rating': data['average_rating'] or 0,
+                'subscriber_count': data['subscriber_count'] or 0,
+                'total_income': data['total_income'] or 0,
+                'completed_courses': data['completed_courses'] or 0,
+            }
+        )
 
-        # Доход от курса
-        total_income = course.subscription.filter(status='Active').aggregate(Sum('price'))['price__sum'] or 0
-
-        # Обновляем или создаем запись аналитики
-        analytics, created = CourseAnalytics.objects.get_or_create(course=course)
-        analytics.average_rating = average_rating
-        analytics.subscriber_count = subscriber_count
-        analytics.total_income = total_income
-        analytics.save()

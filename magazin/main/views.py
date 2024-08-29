@@ -1,4 +1,4 @@
-from django.db.models import Avg
+from django.db.models import Avg, Count, Sum
 from rest_framework import viewsets, generics, status, permissions
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -69,5 +69,7 @@ class CourseListView(generics.ListAPIView):
 
 # Аналитика
 class CourseAnalyticsViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = CourseAnalytics.objects.all()
+    queryset = CourseAnalytics.objects.select_related('course')
     serializer_class = CourseAnalyticsSerializer
+
+
