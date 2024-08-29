@@ -1,4 +1,4 @@
-from django.db.models import Avg, Count, Sum
+from django.db.models import Avg
 from rest_framework import viewsets, generics, status, permissions
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -34,7 +34,6 @@ class RegisterView(generics.CreateAPIView):
 
 
 class PurchaseCourseView(generics.CreateAPIView):
-    queryset = Purchase.objects.all()
     serializer_class = PurchaseSerializer
     permission_classes = [permissions.IsAuthenticated]
 
@@ -44,7 +43,7 @@ class PurchaseCourseView(generics.CreateAPIView):
 
 # Просмотр и создание отзыва и присваивание отзыва пользователю
 class ReviewListCreateView(generics.ListCreateAPIView):
-    queryset = Review.objects.all()
+    queryset = Review.objects.select_related('course', 'user').all()
     serializer_class = ReviewSerializer
     permission_classes = [permissions.IsAuthenticated]
 
@@ -58,18 +57,18 @@ class UserReviewListView(generics.ListAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        return Review.objects.filter(user=self.request.user)
+        return Review.objects.filter(user=self.request.user).select_related('course')
 
 
 # Просмотр всех курсов
 class CourseListView(generics.ListAPIView):
-    queryset = Course.objects.all()
+    queryset = Course.objects.annotate(avg_rating=Avg('review__rating')).all()
     serializer_class = CourseSerializer
 
 
 # Аналитика
 class CourseAnalyticsViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = CourseAnalytics.objects.select_related('course')
+    queryset = CourseAnalytics.objects.select_related('course').all()
     serializer_class = CourseAnalyticsSerializer
 
 

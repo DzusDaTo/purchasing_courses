@@ -113,7 +113,7 @@ class UserProfile(models.Model):
 class Review(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='review')
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    rating = models.FloatField(default=0)
+    rating = models.FloatField(default=0, db_index=True)
     comment = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
 

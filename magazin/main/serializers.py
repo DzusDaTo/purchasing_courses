@@ -44,7 +44,7 @@ class ReviewSerializer(serializers.ModelSerializer):
 
 
 class CourseSerializer(serializers.ModelSerializer):
-    average_rating = serializers.FloatField(read_only=True)
+    average_rating = serializers.FloatField(read_only=True, source='avg_rating')
 
     class Meta:
         model = Course

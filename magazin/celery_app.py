@@ -21,6 +21,6 @@ app.conf.beat_schedule = {
     },
     'update-course-analytics-every-minute': {
         'task': 'main.tasks.update_course_analytics',
-        'schedule': timedelta(minutes=1),
+        'schedule': timedelta(minutes=30),
     },
 }
