@@ -12,10 +12,12 @@ services:
             - ./magazin:/magazin
         environment:
             - DB_HOST=database
+            - DATABASE_PORT=5432
             - DB_NAME=dbname
             - DB_USER=dbuser
             - DB_PASS=pass
-            - CELERY_BROKER_URL = 'redis://redis:6379/0'
+            - CELERY_BROKER_URL='redis://redis:6379/0'
+            - DEBUG=1
 
         command: >
             sh -c "python manage.py runserver 0.0.0.0:8000"
@@ -27,6 +29,9 @@ services:
             - POSTGRES_DB=dbname
             - POSTGRES_USER=dbuser
             - POSTGRES_PASSWORD=pass
+        ports:
+            - "5432:5432"
+
 
     redis:
         image: redis:7.0.5-alpine
@@ -113,4 +118,3 @@ services:
             - "5555:5555"
         environment:
             - CELERY_BROKER_URL=redis://redis:6379/0
-

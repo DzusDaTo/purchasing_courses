@@ -19,17 +19,17 @@ def check_and_update_subscription_status():
 @shared_task
 def update_course_analytics():
     analytics_data = Course.objects.annotate(
-        average_rating=Avg('review__rating'),  # Средний рейтинг
-        subscriber_count=Count('subscription'),  # Количество подписок
-        total_income=Sum('subscription__price', filter=Q(subscription__status='Active')),  # Общий доход от активных подписок
-        completed_courses=Count('subscription', filter=Q(subscription__status='Completed'))  # Количество завершенных курсов
-    ).values('id', 'average_rating', 'subscriber_count', 'total_income', 'completed_courses')
+        avg_course_rating=Avg('review__rating'),  # Измененное имя аннотации для среднего рейтинга
+        subscriber_count=Count('subscription'),
+        total_income=Sum('subscription__price', filter=Q(subscription__status='Active')),
+        completed_courses=Count('subscription', filter=Q(subscription__status='Completed'))
+    ).values('id', 'avg_course_rating', 'subscriber_count', 'total_income', 'completed_courses')
 
     for data in analytics_data:
         CourseAnalytics.objects.update_or_create(
             course_id=data['id'],
             defaults={
-                'average_rating': data['average_rating'] or 0,
+                'average_rating': data['avg_course_rating'] or 0,  # Применение нового имени аннотации
                 'subscriber_count': data['subscriber_count'] or 0,
                 'total_income': data['total_income'] or 0,
                 'completed_courses': data['completed_courses'] or 0,

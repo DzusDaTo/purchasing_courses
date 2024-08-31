@@ -18,3 +18,4 @@ urlpatterns = [
     path('api/courses/', CourseListView.as_view(), name='course-list'),
 ]
 
+
