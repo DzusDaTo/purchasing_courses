@@ -16,7 +16,21 @@ SECRET_KEY = 'django-insecure-#8w5_a(i46zt2^nu01idqeb3uxkx8!@h6aztccw1+y-1(yvq)g
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+def show_toolbar(request):
+    return True
+
+
+DEBUG_TOOLBAR_CONFIG = {
+    "SHOW_TOOLBAR_CALLBACK": show_toolbar,
+}
+
 ALLOWED_HOSTS = ['*']
+
+INTERNAL_IPS = [
+    "127.0.0.1",
+    "0.0.0.0",
+    "localhost",
+]
 
 
 # Application definition
@@ -33,7 +47,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
 
     'main',
-
+    "debug_toolbar",
     'cachalot',
 ]
 
@@ -45,6 +59,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
 ROOT_URLCONF = 'magazin.urls'
