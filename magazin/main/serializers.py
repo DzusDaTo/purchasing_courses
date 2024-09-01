@@ -4,9 +4,13 @@ from django.contrib.auth.models import User
 
 
 class SubscriptionSerializer(serializers.ModelSerializer):
+    user = serializers.ReadOnlyField(source='user.username')
+    course = serializers.ReadOnlyField(source='course.name')
+    plan = serializers.ReadOnlyField(source='plan.plan_types')
+
     class Meta:
         model = Subscription
-        fields = '__all__'
+        fields = ['id', 'status', 'user', 'course', 'plan', 'price', 'start_date', 'end_date']
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -38,9 +42,12 @@ class PurchaseSerializer(serializers.ModelSerializer):
 
 
 class ReviewSerializer(serializers.ModelSerializer):
+    user = serializers.ReadOnlyField(source='user.username')
+    course = serializers.ReadOnlyField(source='course.name')
+
     class Meta:
         model = Review
-        fields = ['course', 'rating', 'comment', 'created_at']
+        fields = ['course', 'user', 'rating', 'comment', 'created_at']
 
 
 class CourseSerializer(serializers.ModelSerializer):
@@ -55,3 +62,7 @@ class CourseAnalyticsSerializer(serializers.ModelSerializer):
     class Meta:
         model = CourseAnalytics
         fields = '__all__'
+
+
+
+

@@ -10,8 +10,10 @@ from .serializers import SubscriptionSerializer, RegisterSerializer, PurchaseSer
 
 
 class SubscriptionViewSet(viewsets.ModelViewSet):
-    # Подгрузка данных одним запрос
-    queryset = Subscription.objects.select_related('user', 'course', 'plan').all()
+    queryset = Subscription.objects.select_related('user', 'course', 'plan').only(
+        'id', 'status', 'user__username', 'course__name', 'plan__plan_types',
+        'price', 'start_date', 'end_date'
+    )
     serializer_class = SubscriptionSerializer
     permission_classes = [IsAuthenticated]
 
@@ -43,7 +45,8 @@ class PurchaseCourseView(generics.CreateAPIView):
 
 # Просмотр и создание отзыва и присваивание отзыва пользователю
 class ReviewListCreateView(generics.ListCreateAPIView):
-    queryset = Review.objects.select_related('course', 'user').all()
+    queryset = Review.objects.select_related('course', 'user').only(
+        'user__username', 'course__name', 'rating', 'comment', 'created_at')
     serializer_class = ReviewSerializer
     permission_classes = [permissions.IsAuthenticated]
 

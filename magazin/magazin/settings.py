@@ -166,10 +166,12 @@ LOGGING = {
 CELERY_BROKER_URL = 'redis://redis:6379/0'
 CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
 
+USE_CACHE = os.getenv('USE_CACHE', 'false') == 'true'
+
 CACHES = {
     "default": {
-        "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": 'redis://redis:6379/1',
+        "BACKEND": "django_redis.cache.RedisCache" if USE_CACHE else "django.core.cache.backends.dummy.DummyCache",
+        "LOCATION": 'redis://redis:6379/1' if USE_CACHE else None,
     }
 }
 
