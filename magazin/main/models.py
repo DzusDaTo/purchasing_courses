@@ -35,8 +35,8 @@ class CourseAnalytics(models.Model):
 
 
 class Purchase(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, related_name='purchase', on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, related_name='purchase', on_delete=models.CASCADE)
     purchase_date = models.DateTimeField(auto_now_add=True)
     is_paid = models.BooleanField(default=False)
 
@@ -112,7 +112,7 @@ class UserProfile(models.Model):
 
 class Review(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='review')
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='review')
     rating = models.FloatField(default=0, db_index=True)
     comment = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)

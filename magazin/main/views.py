@@ -6,7 +6,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 from .models import Subscription, Purchase, Review, Course, CourseAnalytics
 from .serializers import SubscriptionSerializer, RegisterSerializer, PurchaseSerializer, ReviewSerializer, \
-    CourseSerializer, CourseAnalyticsSerializer
+    CourseSerializer, CourseAnalyticsSerializer, UserProfileSerializer
 
 
 class SubscriptionViewSet(viewsets.ModelViewSet):
@@ -75,3 +75,10 @@ class CourseAnalyticsViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = CourseAnalyticsSerializer
 
 
+class UserProfileView(generics.RetrieveAPIView):
+    serializer_class = UserProfileSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        # Возвращаем объект профиля пользователя, который связан с текущим аутентифицированным пользователем
+        return self.request.user.userprofile

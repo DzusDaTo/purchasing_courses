@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Subscription, Purchase, Review, Course, CourseAnalytics
+from .models import Subscription, Purchase, Review, Course, CourseAnalytics, UserProfile
 from django.contrib.auth.models import User
 
 
@@ -62,6 +62,21 @@ class CourseAnalyticsSerializer(serializers.ModelSerializer):
     class Meta:
         model = CourseAnalytics
         fields = '__all__'
+
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    user = serializers.SerializerMethodField()
+    subscriptions = SubscriptionSerializer(many=True, read_only=True, source='user.subscription')
+    reviews = ReviewSerializer(many=True, read_only=True, source='user.review')
+    purchases = PurchaseSerializer(many=True, read_only=True, source='user.purchase')
+    completed_courses = CourseSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = UserProfile
+        fields = ['user', 'bio', 'completed_courses', 'subscriptions', 'reviews', 'purchases']
+
+    def get_user(self, obj):
+        return obj.user.username
 
 
 
